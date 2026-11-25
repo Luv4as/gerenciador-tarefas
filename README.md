@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gerenciador de tarefas
 
-## Getting Started
+Lucas Venancio
 
-First, run the development server:
+Aplicação de demonstração para criar, listar, editar, concluir e excluir tarefas. O projeto foi desenvolvido com Next.js 15, React, TypeScript e tRPC; os dados ficam em memória, sem banco de dados ou serviços externos.
+
+## Requisitos
+
+- Node.js 20 ou superior (recomendado). O Next.js 15 também aceita Node.js 18.18+ e 19.8+.
+- npm.
+
+## Como executar
+
+Clone o repositório e entre na pasta do projeto:
+
+```bash
+git clone https://github.com/Luv4as/gerenciador-tarefas.git
+cd gerenciador-tarefas
+```
+
+Instale as dependências usando o lockfile:
+
+```bash
+npm ci
+```
+
+Inicie o servidor de desenvolvimento:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Não é necessário criar um arquivo `.env` para executar o projeto.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts disponíveis
 
-## Learn More
+| Comando | Descrição |
+| --- | --- |
+| `npm run dev` | Inicia o servidor de desenvolvimento. |
+| `npm run lint` | Executa o ESLint. |
+| `npm run build` | Gera a build de produção. |
+| `npm run start` | Inicia a aplicação já compilada; execute `npm run build` antes. |
 
-To learn more about Next.js, take a look at the following resources:
+## Tecnologias e versões
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Versões resolvidas pelo `package-lock.json`:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Tecnologia ou biblioteca | Versão | Uso |
+| --- | --- | --- |
+| Next.js | 15.5.29 | App Router, renderização no servidor e endpoints. |
+| React / React DOM | 19.3.0 | Interface e componentes. |
+| TypeScript | 5.9.3 | Tipagem estática. |
+| tRPC | 11.31.3 | Comunicação tipada entre frontend e backend. |
+| Zod | 4.6.7 | Validação dos dados recebidos pelo backend. |
+| Tailwind CSS | 4.3.3 | Estilização utilitária. |
+| `@tailwindcss/postcss` / PostCSS | 4.3.3 / 8.5.23 | Processamento do Tailwind CSS. |
+| Base UI | 1.9.0 | Primitivos acessíveis para componentes de interface. |
+| shadcn | 4.23.0 | Base e ferramentas dos componentes locais de UI. |
+| Lucide React | 1.80.0 | Ícones. |
+| class-variance-authority / `cn` | 0.7.1 / 0.5.2 | Variações e composição de classes. |
+| ESLint / `eslint-config-next` | 9.39.5 / 15.5.29 | Análise estática e regras do Next.js. |
 
-## Deploy on Vercel
+## Funcionalidades
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Listagem inicial carregada no servidor.
+- Criação em formulário modal e edição diretamente no cartão da tarefa.
+- Exclusão e alteração do status de conclusão.
+- Ordenação por data de criação e por título.
+- Validação do título e da descrição no frontend e no backend.
+- Rolagem infinita.
+- Feedback de carregamento, sucesso e erro nas operações.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Sobre a rolagem infinita:** atualmente, a lista completa é carregada no servidor; os lotes de 10 controlam a quantidade de cartões exibidos no navegador. Não há paginação na API tRPC.
+
+## Organização do projeto
+
+```text
+app/
+  api/trpc/[trpc]/route.ts   # Adaptador HTTP do tRPC
+  components/                # Lista, cartão, formulário e filtro de tarefas
+  page.tsx                   # Página principal e carregamento inicial no servidor
+  globals.css                # Estilos globais e tema Tailwind
+components/ui/               # Componentes de interface reutilizáveis
+lib/trpc/                    # Clientes tRPC para servidor e navegador
+server/
+  routers/tarefas.ts         # Operações e validações das tarefas
+  db.ts                      # Modelo e armazenamento em memória
+```
+
+O router tRPC expõe `listar`, `criar`, `atualizar`, `atualizarStatus` e `deletar` no endpoint `/api/trpc`.
+
+## Dados e limitações
+
+As tarefas são mantidas em uma lista em memória em `server/db.ts`, com alguns registros fictícios iniciais. Os dados não são persistidos e podem ser perdidos ao reiniciar o processo. As operações tRPC são públicas e não há autenticação; isso foi feito para atender ao escopo do desafio pedido.
+
+## Notas sobre decisões de implementação
+
+- Pensei em adicionar uma sidebar para as duas telas, porém achei que seria desnecessário e seria uma redundância na UI.
+- O mesmo vale para edição e criação de tarefas. Invés de criar uma tela inteira somente com poucos campos não me pareceu uma implementação eficiente, por isso escolhi usar um modal para a criação e a edição no mesmo componente da tarefa.
+- Escolhi fazer um filtro para deixar mais organizada a lista de tarefas, principalmente por poder filtrar qual é mais recente e qual a mais antiga
+- Para deixar mais compatível com possíveis necessidades do usuário decidi colocar um checkbox para o usuário poder colocar a tarefa como concluída. Ele também pode apagar a tarefa depois de concluída, porém considerei o caso do usuário querer manter o histórico de tarefas completas.
