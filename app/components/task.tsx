@@ -45,24 +45,48 @@ export default function Task({
   onDeleted,
   onError,
 }: TaskProps) {
-  const [internalCompleted, setInternalCompleted] = useState(completed ?? false);
+  const [internalStatus, setInternalStatus] = useState(completed ?? false);
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(title);
   const [editDescription, setEditDescription] = useState(description);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [statusError, setStatusError] = useState<string | null>(null);
 
-  const isCompleted = completed ?? internalCompleted;
+  const isCompleted = completed ?? internalStatus;
   const formattedCreatedAt = createdAt
     ? dateFormatter.format(new Date(createdAt))
     : null;
 
-  function handleToggle(nextCompleted: boolean) {
-    if (completed === undefined) {
-      setInternalCompleted(nextCompleted);
+  async function handleToggle(nextCompleted: boolean) {
+    setStatusError(null);
+    setIsUpdatingStatus(true);
+
+    try {
+      await trpc.tarefa.atualizarStatus.mutate({
+        id,
+        completada: nextCompleted,
+      });
+
+      if (completed === undefined) {
+        setInternalStatus(nextCompleted);
+      }
+      onToggle?.(nextCompleted);
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Erro ao atualizar o status da tarefa.";
+      if (onError) {
+        onError(message);
+      } else {
+        setStatusError(message);
+      }
+    } finally {
+      setIsUpdatingStatus(false);
     }
-    onToggle?.(nextCompleted);
   }
 
   function handleStartEdit() {
@@ -173,52 +197,73 @@ export default function Task({
   }
 
   return (
-    <div className="flex min-h-27 w-full items-center gap-3 rounded-lg border border-[#f6f6f6] bg-[#f8f8f8] px-4 py-4">
-      <div className="flex min-w-0 flex-1 items-center gap-3.25">
-        <Checkbox
-          aria-label={`Marcar ${title} como concluída`}
-          checked={isCompleted}
-          disabled={isDeleting}
-          onCheckedChange={handleToggle}
-        />
-        <div className="flex min-w-0 flex-1 items-center gap-3 md:gap-8.25">
-          <h2 className="max-w-64 shrink-0 wrap-break-word text-2xl font-bold leading-snug text-black">
-            {title}
-          </h2>
-          <p className="min-w-0 flex-1 wrap-break-word text-sm font-normal leading-5 text-black">
-            {description}
-          </p>
+    <div className="w-full">
+      <div
+        className={`flex min-h-27 w-full items-center gap-3 rounded-lg border px-4 py-4 transition-colors duration-200 ${
+          isCompleted
+            ? "border-zinc-200 bg-zinc-100"
+            : "border-[#f6f6f6] bg-[#f8f8f8]"
+        }`}
+      >
+        <div className="flex min-w-0 flex-1 items-center gap-3.25">
+          <Checkbox
+            aria-label={`Marcar ${title} como concluída`}
+            checked={isCompleted}
+            disabled={isDeleting || isUpdatingStatus}
+            onCheckedChange={handleToggle}
+          />
+          <div className="flex min-w-0 flex-1 items-center gap-3 md:gap-8.25">
+            <h2
+              className={`max-w-64 shrink-0 wrap-break-word text-2xl font-bold leading-snug transition-colors duration-200 ${
+                isCompleted ? "text-zinc-500" : "text-black"
+              }`}
+            >
+              {title}
+            </h2>
+            <p
+              className={`min-w-0 flex-1 wrap-break-word text-sm font-normal leading-5 transition-colors duration-200 ${
+                isCompleted ? "text-zinc-500" : "text-black"
+              }`}
+            >
+              {description}
+            </p>
+          </div>
+        </div>
+        <div className="flex shrink-0 flex-col items-end gap-3">
+          <div className="relative h-5 w-14">
+            <button
+              aria-label={`Editar ${title}`}
+              className="absolute inset-y-0 left-0 w-5 cursor-pointer disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+              disabled={isDeleting || isUpdatingStatus}
+              onClick={handleStartEdit}
+              type="button"
+            >
+              <Pencil className="h-5 w-5 text-black" />
+            </button>
+
+            <button
+              aria-label={`Excluir ${title}`}
+              className="absolute inset-y-0 right-0 w-5 cursor-pointer disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+              disabled={isDeleting || isUpdatingStatus}
+              onClick={handleDelete}
+              type="button"
+            >
+              <Trash className="h-5 w-5 text-red-600" />
+            </button>
+          </div>
+
+          {formattedCreatedAt && (
+            <span className="whitespace-nowrap text-xs text-zinc-400">
+              {formattedCreatedAt}
+            </span>
+          )}
         </div>
       </div>
-      <div className="flex shrink-0 flex-col items-end gap-3">
-        <div className="relative h-5 w-14">
-          <button
-            aria-label={`Editar ${title}`}
-            className="absolute inset-y-0 left-0 w-5 cursor-pointer disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-            disabled={isDeleting}
-            onClick={handleStartEdit}
-            type="button"
-          >
-            <Pencil className="h-5 w-5 text-black" />
-          </button>
-
-          <button
-            aria-label={`Excluir ${title}`}
-            className="absolute inset-y-0 right-0 w-5 cursor-pointer disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-            disabled={isDeleting}
-            onClick={handleDelete}
-            type="button"
-          >
-            <Trash className="h-5 w-5 text-red-600" />
-          </button>
-        </div>
-
-        {formattedCreatedAt && (
-          <span className="whitespace-nowrap text-xs text-zinc-400">
-            {formattedCreatedAt}
-          </span>
-        )}
-      </div>
+      {statusError && !onError && (
+        <p className="mt-2 text-sm text-red-600" role="alert">
+          {statusError}
+        </p>
+      )}
     </div>
   );
 }

@@ -27,6 +27,7 @@ export function TaskList({ initialTasks }: TaskListProps) {
         id: created.id,
         titulo: created.titulo,
         descricao: created.descricao,
+        completada: false,
         dataCriacao: new Date(created.dataCriacao),
       },
     ]);
@@ -46,6 +47,18 @@ export function TaskList({ initialTasks }: TaskListProps) {
     );
     toast.add({
       title: "Tarefa atualizada com sucesso!",
+      type: "success",
+    });
+  }
+
+  function handleStatusUpdated(id: string, completada: boolean) {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === id ? { ...task, completada } : task
+      )
+    );
+    toast.add({
+      title: "Status da tarefa atualizado com sucesso!",
       type: "success",
     });
   }
@@ -99,6 +112,10 @@ export function TaskList({ initialTasks }: TaskListProps) {
               title={tarefa.titulo}
               description={tarefa.descricao ?? ""}
               createdAt={tarefa.dataCriacao}
+              completed={tarefa.completada}
+              onToggle={(completada) =>
+                handleStatusUpdated(tarefa.id, completada)
+              }
               onUpdated={handleUpdated}
               onDeleted={handleDeleted}
               onError={handleError}

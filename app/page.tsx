@@ -8,7 +8,10 @@ async function TasksLoader() {
   await connection();
   const tarefas = await serverTrpc.tarefa.listar();
   const tasksKey = tarefas
-    .map((t) => `${t.id}:${t.titulo}:${t.descricao ?? ""}`)
+    .map(
+      (t) =>
+        `${t.id}:${t.titulo}:${t.descricao ?? ""}:${t.completada ?? false}`
+    )
     .join("|");
 
   return <TaskList key={tasksKey} initialTasks={tarefas} />;
