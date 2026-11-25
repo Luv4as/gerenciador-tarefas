@@ -6,6 +6,7 @@ import { tarefas } from '../db'
 const criarTarefaSchema = z.object({
   titulo: z
     .string()
+    .trim()
     .min(1, 'O título não pode estar vazio.')
     .max(100, 'O título pode ter no máximo 100 caracteres.'),
   descricao: z
@@ -18,6 +19,7 @@ const atualizarTarefaSchema = z.object({
   id: z.string().min(1, 'O id é obrigatório.'),
   titulo: z
     .string()
+    .trim()
     .min(1, 'O título não pode estar vazio.')
     .max(100, 'O título pode ter no máximo 100 caracteres.')
     .optional(),
