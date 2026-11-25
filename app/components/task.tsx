@@ -153,25 +153,35 @@ export default function Task({
         className="flex w-full flex-col gap-3 rounded-lg border border-[#e5e5e5] bg-[#f8f8f8] px-4 py-4"
       >
         <div className="flex flex-col gap-2">
-          <Input
-            aria-label="Título da tarefa"
-            aria-invalid={Boolean(validationError)}
-            className="bg-white font-semibold text-black"
-            disabled={isSaving}
-            onChange={(e) => setEditTitle(e.target.value)}
-            placeholder="Título da tarefa"
-            type="text"
-            value={editTitle}
-          />
-          <Textarea
-            aria-label="Descrição da tarefa"
-            className="resize-none bg-white text-black"
-            disabled={isSaving}
-            onChange={(e) => setEditDescription(e.target.value)}
-            placeholder="Descrição (opcional)"
-            rows={2}
-            value={editDescription}
-          />
+          <div className="grid gap-1">
+            <Input
+              aria-label="Título da tarefa"
+              aria-invalid={Boolean(validationError)}
+              className="bg-white font-semibold text-black"
+              disabled={isSaving}
+              onChange={(e) => setEditTitle(e.target.value)}
+              placeholder="Título da tarefa"
+              type="text"
+              value={editTitle}
+            />
+            <span className="text-right text-xs text-zinc-500">
+              {editTitle.length}/100
+            </span>
+          </div>
+          <div className="grid gap-1">
+            <Textarea
+              aria-label="Descrição da tarefa"
+              className="resize-none bg-white text-black"
+              disabled={isSaving}
+              onChange={(e) => setEditDescription(e.target.value)}
+              placeholder="Descrição (opcional)"
+              rows={2}
+              value={editDescription}
+            />
+            <span className="text-right text-xs text-zinc-500">
+              {editDescription.length}/500
+            </span>
+          </div>
         </div>
 
         {validationError && (

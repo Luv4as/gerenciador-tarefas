@@ -121,6 +121,9 @@ export function CreateTaskButton({ onCreated }: CreateTaskButtonProps) {
               type="text"
               value={titulo}
             />
+            <span className="text-right text-xs text-zinc-500">
+              {titulo.length}/100
+            </span>
           </div>
 
           <div className="grid gap-1.5">
@@ -136,6 +139,9 @@ export function CreateTaskButton({ onCreated }: CreateTaskButtonProps) {
               rows={3}
               value={descricao}
             />
+            <span className="text-right text-xs text-zinc-500">
+              {descricao.length}/500
+            </span>
           </div>
 
           {validationError && (
