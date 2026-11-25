@@ -101,3 +101,5 @@ As tarefas são mantidas em uma lista em memória em `server/db.ts`, com alguns 
 - O mesmo vale para edição e criação de tarefas. Invés de criar uma tela inteira somente com poucos campos não me pareceu uma implementação eficiente, por isso escolhi usar um modal para a criação e a edição no mesmo componente da tarefa.
 - Escolhi fazer um filtro para deixar mais organizada a lista de tarefas, principalmente por poder filtrar qual é mais recente e qual a mais antiga
 - Para deixar mais compatível com possíveis necessidades do usuário decidi colocar um checkbox para o usuário poder colocar a tarefa como concluída. Ele também pode apagar a tarefa depois de concluída, porém considerei o caso do usuário querer manter o histórico de tarefas completas.
+- Adicionei contadores de caracteres nos inputs. Assim, quando o usuário receber erro pela quantidade de caracteres ser maior do que o permitido, ele pode ir escrever com o limite em mente.
+- Aviso: O projeto usa versão 15 do Next.js pois no enunciado do desafio diz "criar uma aplicação NextJS (v15)".
