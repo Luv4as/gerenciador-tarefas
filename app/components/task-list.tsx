@@ -4,6 +4,7 @@ import { toast } from "@/components/ui/toast";
 import type { Tarefa } from "@/server/db";
 import { useEffect, useRef, useState } from "react";
 import { CreateTaskButton } from "./create-task-button";
+import { EmptyList } from "./empty-list";
 import { Filter, type SortOption } from "./filter";
 import Task from "./task";
 
@@ -127,41 +128,43 @@ export function TaskList({ initialTasks }: TaskListProps) {
 
   return (
     <div className="w-full">
-      <div className="flex flex-row items-center justify-between w-full">
-        <CreateTaskButton onCreated={handleCreated} />
-        <Filter value={sortOrder} onChange={handleSortChange} />
-      </div>
-
       {sortedTasks.length === 0 ? (
-        <p className="mt-8 text-sm text-zinc-500">
-          Nenhuma tarefa cadastrada.
-        </p>
-      ) : (
-        <div className="flex flex-col items-center justify-center w-full gap-4 mt-8">
-          {visibleTasks.map((tarefa) => (
-            <Task
-              key={tarefa.id}
-              id={tarefa.id}
-              title={tarefa.titulo}
-              description={tarefa.descricao ?? ""}
-              createdAt={tarefa.dataCriacao}
-              completed={tarefa.completada}
-              onToggle={(completada) =>
-                handleStatusUpdated(tarefa.id, completada)
-              }
-              onUpdated={handleUpdated}
-              onDeleted={handleDeleted}
-              onError={handleError}
-            />
-          ))}
-          {hasMoreTasks && (
-            <div
-              aria-hidden="true"
-              className="h-px w-full"
-              ref={loadMoreRef}
-            />
-          )}
+        <div className="mt-8 w-full">
+          <EmptyList onCreated={handleCreated} />
         </div>
+      ) : (
+        <>
+          <div className="flex w-full flex-row items-center justify-between">
+            <CreateTaskButton onCreated={handleCreated} />
+            <Filter value={sortOrder} onChange={handleSortChange} />
+          </div>
+
+          <div className="mt-8 flex w-full flex-col items-center justify-center gap-4">
+            {visibleTasks.map((tarefa) => (
+              <Task
+                key={tarefa.id}
+                id={tarefa.id}
+                title={tarefa.titulo}
+                description={tarefa.descricao ?? ""}
+                createdAt={tarefa.dataCriacao}
+                completed={tarefa.completada}
+                onToggle={(completada) =>
+                  handleStatusUpdated(tarefa.id, completada)
+                }
+                onUpdated={handleUpdated}
+                onDeleted={handleDeleted}
+                onError={handleError}
+              />
+            ))}
+            {hasMoreTasks && (
+              <div
+                aria-hidden="true"
+                className="h-px w-full"
+                ref={loadMoreRef}
+              />
+            )}
+          </div>
+        </>
       )}
     </div>
   );

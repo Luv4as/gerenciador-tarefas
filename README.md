@@ -93,7 +93,7 @@ O router tRPC expõe `listar`, `criar`, `atualizar`, `atualizarStatus` e `deleta
 
 ## Dados e limitações
 
-As tarefas são mantidas em uma lista em memória em `server/db.ts`, com alguns registros fictícios iniciais. Os dados não são persistidos e podem ser perdidos ao reiniciar o processo. As operações tRPC são públicas e não há autenticação; isso foi feito para atender ao escopo do desafio pedido.
+As tarefas são mantidas em uma lista em memória em `server/db.ts`, que começa vazia. Os dados não são persistidos e podem ser perdidos ao reiniciar o processo. As operações tRPC são públicas e não há autenticação; isso foi feito para atender ao escopo do desafio pedido.
 
 ## Notas sobre decisões de implementação
 

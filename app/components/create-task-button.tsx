@@ -17,7 +17,7 @@ import { trpc } from "@/lib/trpc/client";
 import { useRouter } from "next/navigation";
 import { useState, type SubmitEvent } from "react";
 
-type CreatedTask = {
+export type CreatedTask = {
   id: string;
   titulo: string;
   descricao?: string;
