@@ -116,7 +116,6 @@ export function CreateTaskButton({ onCreated }: CreateTaskButtonProps) {
               id="task-title"
               aria-invalid={Boolean(validationError)}
               disabled={isSubmitting}
-              maxLength={100}
               onChange={(e) => setTitulo(e.target.value)}
               placeholder="Título da tarefa"
               type="text"
@@ -132,7 +131,6 @@ export function CreateTaskButton({ onCreated }: CreateTaskButtonProps) {
               id="task-description"
               className="resize-none"
               disabled={isSubmitting}
-              maxLength={500}
               onChange={(e) => setDescricao(e.target.value)}
               placeholder="Descrição opcional da tarefa"
               rows={3}
