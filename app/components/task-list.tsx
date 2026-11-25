@@ -3,6 +3,8 @@
 import { toast } from "@/components/ui/toast";
 import type { Tarefa } from "@/server/db";
 import { useState } from "react";
+import { CreateTaskButton } from "./create-task-button";
+import { Filter } from "./filter";
 import Task from "./task";
 
 type TaskListProps = {
@@ -11,6 +13,23 @@ type TaskListProps = {
 
 export function TaskList({ initialTasks }: TaskListProps) {
   const [tasks, setTasks] = useState<Tarefa[]>(initialTasks);
+
+  function handleCreated(created: {
+    id: string;
+    titulo: string;
+    descricao?: string;
+    dataCriacao: string | Date;
+  }) {
+    setTasks((prev) => [
+      ...prev,
+      {
+        id: created.id,
+        titulo: created.titulo,
+        descricao: created.descricao,
+        dataCriacao: new Date(created.dataCriacao),
+      },
+    ]);
+  }
 
   function handleUpdated(updated: {
     id: string;
@@ -46,27 +65,32 @@ export function TaskList({ initialTasks }: TaskListProps) {
     });
   }
 
-  if (tasks.length === 0) {
-    return (
-      <p className="mt-8 text-sm text-zinc-500">
-        Nenhuma tarefa cadastrada.
-      </p>
-    );
-  }
-
   return (
-    <div className="flex flex-col items-center justify-center w-full gap-4 mt-8">
-      {tasks.map((tarefa) => (
-        <Task
-          key={tarefa.id}
-          id={tarefa.id}
-          title={tarefa.titulo}
-          description={tarefa.descricao ?? ""}
-          onUpdated={handleUpdated}
-          onDeleted={handleDeleted}
-          onError={handleError}
-        />
-      ))}
+    <div>
+      <div className="flex flex-row items-center justify-between w-full">
+        <CreateTaskButton onCreated={handleCreated} />
+        <Filter />
+      </div>
+
+      {tasks.length === 0 ? (
+        <p className="mt-8 text-sm text-zinc-500">
+          Nenhuma tarefa cadastrada.
+        </p>
+      ) : (
+        <div className="flex flex-col items-center justify-center w-full gap-4 mt-8">
+          {tasks.map((tarefa) => (
+            <Task
+              key={tarefa.id}
+              id={tarefa.id}
+              title={tarefa.titulo}
+              description={tarefa.descricao ?? ""}
+              onUpdated={handleUpdated}
+              onDeleted={handleDeleted}
+              onError={handleError}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

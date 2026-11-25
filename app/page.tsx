@@ -1,16 +1,17 @@
 // import Image from "next/image";
 import { Suspense } from "react";
 import { connection } from "next/server";
-import { Filter } from "./components/filter";
-import { CreateTaskButton } from "./components/create-task-button";
 import { TaskList } from "./components/task-list";
 import { serverTrpc } from "@/lib/trpc/server";
 
 async function TasksLoader() {
   await connection();
   const tarefas = await serverTrpc.tarefa.listar();
+  const tasksKey = tarefas
+    .map((t) => `${t.id}:${t.titulo}:${t.descricao ?? ""}`)
+    .join("|");
 
-  return <TaskList initialTasks={tarefas} />;
+  return <TaskList key={tasksKey} initialTasks={tarefas} />;
 }
 
 export default function Home() {
@@ -24,10 +25,6 @@ export default function Home() {
         </div>
       </div>
       <main className="flex flex-1 w-full flex-col items-center py-32">
-        <div className="flex flex-row items-center justify-between w-full">
-          <CreateTaskButton />
-          <Filter></Filter>
-        </div>
         <Suspense
           fallback={
             <p className="mt-8 text-sm text-zinc-500">Carregando tarefas...</p>
