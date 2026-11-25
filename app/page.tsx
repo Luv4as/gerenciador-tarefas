@@ -1,9 +1,17 @@
-'use client'
-
 // import Image from "next/image";
-import Task from "./components/task";
+import { Suspense } from "react";
+import { connection } from "next/server";
 import { Filter } from "./components/filter";
-import { Button } from "@/components/ui/button";
+import { CreateTaskButton } from "./components/create-task-button";
+import { TaskList } from "./components/task-list";
+import { serverTrpc } from "@/lib/trpc/server";
+
+async function TasksLoader() {
+  await connection();
+  const tarefas = await serverTrpc.tarefa.listar();
+
+  return <TaskList initialTasks={tarefas} />;
+}
 
 export default function Home() {
   return (
@@ -17,16 +25,16 @@ export default function Home() {
       </div>
       <main className="flex flex-1 w-full flex-col items-center py-32">
         <div className="flex flex-row items-center justify-between w-full">
-          <Button
-            onClick={() => {
-
-            }}
-          >Criar tarefa</Button>
+          <CreateTaskButton />
           <Filter></Filter>
         </div>
-        <div className="flex flex-col items-center justify-center w-full gap-4 mt-8">
-          <Task></Task>
-        </div>
+        <Suspense
+          fallback={
+            <p className="mt-8 text-sm text-zinc-500">Carregando tarefas...</p>
+          }
+        >
+          <TasksLoader />
+        </Suspense>
       </main>
     </div>
   );
