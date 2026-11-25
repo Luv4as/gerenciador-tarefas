@@ -1,4 +1,4 @@
-// import Image from "next/image";
+import Image from "next/image";
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { TaskList } from "./components/task-list";
@@ -19,8 +19,7 @@ export default function Home() {
     <div className="flex flex-col flex-1 items-center justify-center py-10 px-40 bg-zinc-50 font-sans dark:bg-black">
       <div className="flex w-full flex-col items-start gap-2">
         <div className="flex flex-row items-center justify-center gap-2">
-          <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
-          {/* <Image src="" alt="Logo" width={100} height={100} /> */}
+          <Image src="/icon.svg" alt="Logo" width={58} height={58} />
           <h1 className="text-2xl font-bold">Tarefas</h1>
         </div>
       </div>
