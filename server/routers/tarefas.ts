@@ -27,6 +27,11 @@ const atualizarTarefaSchema = z.object({
     .optional(),
 })
 
+const atualizarStatusTarefaSchema = z.object({
+  id: z.string().min(1, 'O id é obrigatório.'),
+  completada: z.boolean(),
+})
+
 
 export const tarefasRouter = router({
   listar: publicProcedure.query(() => {
@@ -41,6 +46,7 @@ export const tarefasRouter = router({
         id: crypto.randomUUID(),
         titulo: input.titulo,
         descricao: input.descricao,
+        completada: false,
         dataCriacao: new Date(),
       }
 
@@ -55,7 +61,7 @@ export const tarefasRouter = router({
     .mutation(({ input }) => {
       const indice = tarefas.findIndex((t) => t.id === input.id)
 
-      if(indice === -1){
+      if (indice === -1) {
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: `Tarefa com id "${input.id}" não encontrada.`,
@@ -64,13 +70,31 @@ export const tarefasRouter = router({
 
       const tarefa = tarefas[indice]
 
-      if(input.titulo !== undefined){
+      if (input.titulo !== undefined) {
         tarefa.titulo = input.titulo
       }
 
-      if(input.descricao !== undefined){
+      if (input.descricao !== undefined) {
         tarefa.descricao = input.descricao
       }
+
+      return tarefa
+    }),
+
+  atualizarStatus: publicProcedure
+    .input(atualizarStatusTarefaSchema)
+    .mutation(({ input }) => {
+      const indice = tarefas.findIndex((t) => t.id === input.id)
+
+      if (indice === -1) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: `Tarefa com id "${input.id}" não encontrada.`,
+        })
+      }
+
+      const tarefa = tarefas[indice]
+      tarefa.completada = input.completada
 
       return tarefa
     }),
