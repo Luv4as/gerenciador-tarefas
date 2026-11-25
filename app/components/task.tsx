@@ -169,10 +169,10 @@ export default function Task({
           onCheckedChange={handleToggle}
         />
         <div className="flex min-w-0 flex-1 items-center gap-3 md:gap-8.25">
-          <h2 className="shrink-0 whitespace-nowrap text-2xl font-bold leading-5 text-black">
+          <h2 className="max-w-64 shrink-0 wrap-break-word text-2xl font-bold leading-snug text-black">
             {title}
           </h2>
-          <p className="min-w-0 flex-1 text-sm font-normal leading-5 text-black">
+          <p className="min-w-0 flex-1 wrap-break-word text-sm font-normal leading-5 text-black">
             {description}
           </p>
         </div>
