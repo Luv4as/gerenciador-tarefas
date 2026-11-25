@@ -4,6 +4,8 @@ Lucas Venancio
 
 Aplicação de demonstração para criar, listar, editar, concluir e excluir tarefas. O projeto foi desenvolvido com Next.js 15, React, TypeScript e tRPC; os dados ficam em memória, sem banco de dados ou serviços externos.
 
+Para a criação das telas do frontend foi feito um protótipo no Figma para guiar o desenvolviemento, disponivel [AQUI](https://www.figma.com/design/ND8O77n9iv8OnvexVnsFJj/Gerenciador-de-tarefas?node-id=0-1&t=CsPcDbAef45XSRah-1).
+
 ## Requisitos
 
 - Node.js 20 ou superior (recomendado). O Next.js 15 também aceita Node.js 18.18+ e 19.8+.
