@@ -18,6 +18,7 @@ type TaskProps = {
   id: string;
   title?: string;
   description?: string;
+  createdAt?: Date | string;
   completed?: boolean;
   onToggle?: (completed: boolean) => void;
   onUpdated?: (task: UpdatedTask) => void;
@@ -25,10 +26,19 @@ type TaskProps = {
   onError?: (message: string) => void;
 };
 
+const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
 export default function Task({
   id,
   title = "Título",
   description = "",
+  createdAt,
   completed,
   onToggle,
   onUpdated,
@@ -44,6 +54,9 @@ export default function Task({
   const [isDeleting, setIsDeleting] = useState(false);
 
   const isCompleted = completed ?? internalCompleted;
+  const formattedCreatedAt = createdAt
+    ? dateFormatter.format(new Date(createdAt))
+    : null;
 
   function handleToggle(nextCompleted: boolean) {
     if (completed === undefined) {
@@ -177,26 +190,34 @@ export default function Task({
           </p>
         </div>
       </div>
-      <div className="relative h-5 w-14 shrink-0">
-        <button
-          aria-label={`Editar ${title}`}
-          className="absolute inset-y-0 left-0 w-5 cursor-pointer disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-          disabled={isDeleting}
-          onClick={handleStartEdit}
-          type="button"
-        >
-          <Pencil className="h-5 w-5 text-black" />
-        </button>
+      <div className="flex shrink-0 flex-col items-end gap-3">
+        <div className="relative h-5 w-14">
+          <button
+            aria-label={`Editar ${title}`}
+            className="absolute inset-y-0 left-0 w-5 cursor-pointer disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+            disabled={isDeleting}
+            onClick={handleStartEdit}
+            type="button"
+          >
+            <Pencil className="h-5 w-5 text-black" />
+          </button>
 
-        <button
-          aria-label={`Excluir ${title}`}
-          className="absolute inset-y-0 right-0 w-5 cursor-pointer disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-          disabled={isDeleting}
-          onClick={handleDelete}
-          type="button"
-        >
-          <Trash className="h-5 w-5 text-red-600" />
-        </button>
+          <button
+            aria-label={`Excluir ${title}`}
+            className="absolute inset-y-0 right-0 w-5 cursor-pointer disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+            disabled={isDeleting}
+            onClick={handleDelete}
+            type="button"
+          >
+            <Trash className="h-5 w-5 text-red-600" />
+          </button>
+        </div>
+
+        {formattedCreatedAt && (
+          <span className="whitespace-nowrap text-xs text-zinc-400">
+            {formattedCreatedAt}
+          </span>
+        )}
       </div>
     </div>
   );

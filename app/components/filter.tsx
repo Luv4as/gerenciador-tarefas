@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Select,
   SelectContent,
@@ -6,26 +8,39 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
-const items = [
-  { label: "Select a fruit", value: null },
-  { label: "Apple", value: "apple" },
-  { label: "Banana", value: "banana" },
-  { label: "Blueberry", value: "blueberry" },
-  { label: "Grapes", value: "grapes" },
-  { label: "Pineapple", value: "pineapple" },
-]
+export type SortOption = "date-desc" | "date-asc" | "title-asc" | "title-desc";
 
-export function Filter() {
+const items: { label: string; value: SortOption }[] = [
+  { label: "Mais recentes", value: "date-desc" },
+  { label: "Mais antigos", value: "date-asc" },
+  { label: "Título (A-Z)", value: "title-asc" },
+  { label: "Título (Z-A)", value: "title-desc" },
+];
+
+type FilterProps = {
+  value: SortOption;
+  onChange: (value: SortOption) => void;
+};
+
+export function Filter({ value, onChange }: FilterProps) {
   return (
-    <Select items={items}>
+    <Select
+      items={items}
+      value={value}
+      onValueChange={(nextValue) => {
+        if (nextValue) {
+          onChange(nextValue);
+        }
+      }}
+    >
       <SelectTrigger className="w-full max-w-48">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>Fruits</SelectLabel>
+          <SelectLabel>Ordenar por</SelectLabel>
           {items.map((item) => (
             <SelectItem key={item.value} value={item.value}>
               {item.label}
@@ -34,5 +49,5 @@ export function Filter() {
         </SelectGroup>
       </SelectContent>
     </Select>
-  )
+  );
 }

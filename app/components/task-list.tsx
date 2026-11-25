@@ -4,7 +4,7 @@ import { toast } from "@/components/ui/toast";
 import type { Tarefa } from "@/server/db";
 import { useState } from "react";
 import { CreateTaskButton } from "./create-task-button";
-import { Filter } from "./filter";
+import { Filter, type SortOption } from "./filter";
 import Task from "./task";
 
 type TaskListProps = {
@@ -13,6 +13,7 @@ type TaskListProps = {
 
 export function TaskList({ initialTasks }: TaskListProps) {
   const [tasks, setTasks] = useState<Tarefa[]>(initialTasks);
+  const [sortOrder, setSortOrder] = useState<SortOption>("date-desc");
 
   function handleCreated(created: {
     id: string;
@@ -65,25 +66,39 @@ export function TaskList({ initialTasks }: TaskListProps) {
     });
   }
 
+  const sortedTasks = [...tasks].sort((a, b) => {
+    if (sortOrder === "date-desc") {
+      return new Date(b.dataCriacao).getTime() - new Date(a.dataCriacao).getTime();
+    }
+    if (sortOrder === "date-asc") {
+      return new Date(a.dataCriacao).getTime() - new Date(b.dataCriacao).getTime();
+    }
+    if (sortOrder === "title-desc") {
+      return b.titulo.localeCompare(a.titulo, "pt-BR", { sensitivity: "base" });
+    }
+    return a.titulo.localeCompare(b.titulo, "pt-BR", { sensitivity: "base" });
+  });
+
   return (
-    <div>
+    <div className="w-full">
       <div className="flex flex-row items-center justify-between w-full">
         <CreateTaskButton onCreated={handleCreated} />
-        <Filter />
+        <Filter value={sortOrder} onChange={setSortOrder} />
       </div>
 
-      {tasks.length === 0 ? (
+      {sortedTasks.length === 0 ? (
         <p className="mt-8 text-sm text-zinc-500">
           Nenhuma tarefa cadastrada.
         </p>
       ) : (
         <div className="flex flex-col items-center justify-center w-full gap-4 mt-8">
-          {tasks.map((tarefa) => (
+          {sortedTasks.map((tarefa) => (
             <Task
               key={tarefa.id}
               id={tarefa.id}
               title={tarefa.titulo}
               description={tarefa.descricao ?? ""}
+              createdAt={tarefa.dataCriacao}
               onUpdated={handleUpdated}
               onDeleted={handleDeleted}
               onError={handleError}
